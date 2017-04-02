@@ -12,5 +12,8 @@
   },
   "author": "fast",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/FAST-JE/profitway#readme"
+  "homepage": "https://bitbucket.org/FAST-JE/profitway#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
 }
