@@ -10,13 +10,20 @@ var dev = environments.development;
 var prod = environments.production;
 
 var postcss_for_dev = [
-  require('postcss-import'),
+  require('postcss-import')({
+    plugins: [
+      require("stylelint")({
+        "rules": {
+          "indentation": 6,
+        }
+      })
+    ]
+  }),
   require('postcss-url'),
   require('postcss-cssnext'),
   require('postcss-short'),
   require('postcss-browser-reporter'),
-  require('postcss-reporter'),
-  require('stylelint')
+  require('postcss-reporter')({ clearMessages: true })
 ];
 
 var postcss_for_prod = [
@@ -38,7 +45,7 @@ var path = {
   app: {
     html: './app/*.html',
       js: './app/js/**/*.js',
-     css: './app/postcss/**/.css',
+     css: './app/postcss/**/*.css',
      img: './app/img/**/*.*'
   },
   watch: {
@@ -72,16 +79,19 @@ gulp.task('clear', function() {
   return del.sync(path.clean);
 });
 
-gulp.task('watch', ['bs', 'css'], function () {
-  gulp.watch('./app/postcss/**/*.css', ['css']);
-  gulp.watch('app/**/*.html', bs.reload);
-  gulp.watch('app/js/**/*.js', bs.reload);
+gulp.task('watch', ['bs', 'css:dev'], function () {
+  gulp.watch(path.watch.css, ['css:dev']);
 });
+
+gulp.task('hi', function () {
+  console.log(path.app.css);
+});
+
 
 gulp.task('bs', function() {
   bs.init({
     server: {
-      baseDir: path.build
+      baseDir: path.build.html+''
     },
     port: 8080,
     host: 'localhost',
