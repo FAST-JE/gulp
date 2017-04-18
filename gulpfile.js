@@ -10,14 +10,11 @@ var dev = environments.development;
 var prod = environments.production;
 
 var postcss_for_dev = [
-  require('postcss-import')({
-    plugins: [
-      require("stylelint")({
-        "rules": {
-          "indentation": 6,
-        }
-      })
-    ]
+  require('postcss-import'),
+  require("stylelint")({
+    "rules": {
+      "indentation": 2
+    }
   }),
   require('postcss-url'),
   require('postcss-cssnext'),
@@ -37,37 +34,40 @@ var postcss_for_prod = [
 
 var path = {
   build: {
-    html: './build/',
-      js: './build/js/',
-     css: './build/css/',
-     img: './build/img/'
+    html:    './build/',
+    js:      './build/js/',
+    css:     './build/css/',
+    img:     './build/img/'
   },
   app: {
-    html: './app/*.html',
-      js: './app/js/**/*.js',
-     css: './app/postcss/**/*.css',
-     img: './app/img/**/*.*'
+    root:    './app/',
+    html:    './app/*.html',
+    js:      './app/js/**/*.js',
+    css:     './app/css/**/*.css',
+    postcss: './app/postcss/**/*.css',
+    img:     './app/img/**/*.*'
   },
   watch: {
-    html: './app/**/*.html',
-      js: './app/js/**/*.js',
-     css: './app/postcss/**/*.css',
-     img: './app/img/**/*.*'
+    html:    './app/**/*.html',
+    js:      './app/js/**/*.js',
+    css:     './app/postcss/**/*.css',
+    postcss: './app/postcss/**/*.css',
+    img:     './app/img/**/*.*'
   },
   clean: './build'
 };
 
 gulp.task('css:dev', function () {
-  return gulp.src(path.app.css)
+  return gulp.src(path.app.postcss)
     .pipe(dev(sourcemaps.init()))
     .pipe(postcss(postcss_for_dev))
     .pipe(dev(sourcemaps.write('.')))
-    .pipe(gulp.dest(path.build.css))
+    .pipe(gulp.dest(path.app.css))
     .pipe(bs.stream());
 });
 
 gulp.task('css:prod', function () {
-  return gulp.src(path.app.css)
+  return gulp.src(path.app.postcss)
     .pipe(dev(sourcemaps.init()))
     .pipe(postcss(postcss_for_prod))
     .pipe(dev(sourcemaps.write('.')))
@@ -75,23 +75,21 @@ gulp.task('css:prod', function () {
     .pipe(bs.stream());
 });
 
+gulp.task('html:build', function () {
+  gulp.src(path.app.html)
+    .pipe(gulp.dest(path.build.html))
+    .pipe(bs.stream());
+});
+
 gulp.task('clear', function() {
   return del.sync(path.clean);
-});
-
-gulp.task('watch', ['bs', 'css:dev'], function () {
-  gulp.watch(path.watch.css, ['css:dev']);
-});
-
-gulp.task('hi', function () {
-  console.log(path.app.css);
 });
 
 
 gulp.task('bs', function() {
   bs.init({
     server: {
-      baseDir: path.build.html+''
+      baseDir: [path.app.root]
     },
     port: 8080,
     host: 'localhost',
@@ -99,3 +97,17 @@ gulp.task('bs', function() {
     open: false
   });
 });
+
+
+gulp.task('watch', ['bs', 'css:dev', 'html:build'], function () {
+  watch([path.watch.postcss], function(event, cb) {
+    gulp.start('css:dev');
+  });
+  watch([path.watch.html], function (event, cb) {
+    gulp.start('html:build');
+  });
+});
+
+gulp.task('build', ['css:prod', 'html:build']);
+
+gulp.task('default', ['css:dev', 'html:build', 'watch']);

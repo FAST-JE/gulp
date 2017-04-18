@@ -4,10 +4,10 @@ html {
 }
 
 body {
-    background: #ffffff url("img/bg.png") no-repeat 50% 0;
-    font: 400 14px/1.46 Arial, sans-serif;
-    width: 100%;
-    height: 100% !important;
+  background: #ffffff url("img/bg.png") no-repeat 50% 0;
+  font: 400 14px/1.46 Arial, sans-serif;
+  width: 100%;
+  height: 100% !important;
 }
 
 /* settings */
@@ -19,14 +19,14 @@ ul {
 }
 
 .clearfix::after {
-    content: "";
-    display: table;
-    clear: both;
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .clearfix::before {
-    content: "";
-    display: table;
+  content: "";
+  display: table;
 }
 
 .container {
