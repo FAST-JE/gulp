@@ -77,7 +77,7 @@ gulp.task('css:prod', function () {
 
 gulp.task('html:build', function () {
   return gulp.src(path.app.html)
-    .pipe(gulp.dest(path.build.root))
+    .pipe(gulp.dest(path.build.html))
     .pipe(bs.stream());
 });
 
