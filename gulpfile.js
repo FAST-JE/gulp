@@ -40,7 +40,6 @@ var path = {
     img:     './build/img/'
   },
   app: {
-    root:    './app/',
     html:    './app/*.html',
     js:      './app/js/**/*.js',
     css:     './app/css/**/*.css',
@@ -62,7 +61,7 @@ gulp.task('css:dev', function () {
     .pipe(dev(sourcemaps.init()))
     .pipe(postcss(postcss_for_dev))
     .pipe(dev(sourcemaps.write('.')))
-    .pipe(gulp.dest(path.app.css))
+    .pipe(gulp.dest(path.build.css))
     .pipe(bs.stream());
 });
 
@@ -78,14 +77,14 @@ gulp.task('css:prod', function () {
 
 gulp.task('html:build', function () {
   return gulp.src(path.app.html)
-    .pipe(gulp.dest(path.app.root))
+    .pipe(gulp.dest(path.build.root))
     .pipe(bs.stream());
 });
 
 gulp.task('bs', function() {
   bs.init({
     server: {
-      baseDir: [path.app.root]
+      baseDir: [path.build.html]
     },
     port: 8080,
     host: 'localhost',
@@ -108,6 +107,6 @@ gulp.task('clear', function() {
   return del.sync(path.clean);
 });
 
-gulp.task('build', ['css:prod', 'html:build']);
+gulp.task('build', ['clear', 'css:prod', 'html:build']);
 
-gulp.task('default', ['css:dev', 'html:build', 'watch']);
+gulp.task('default', ['clear', 'css:dev', 'html:build', 'watch']);
