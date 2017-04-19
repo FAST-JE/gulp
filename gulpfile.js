@@ -82,11 +82,6 @@ gulp.task('html:build', function () {
     .pipe(bs.stream());
 });
 
-gulp.task('clear', function() {
-  return del.sync(path.clean);
-});
-
-
 gulp.task('bs', function() {
   bs.init({
     server: {
@@ -107,6 +102,10 @@ gulp.task('watch', ['bs', 'css:dev', 'html:build'], function () {
   watch([path.watch.html], function (event, cb) {
     gulp.start('html:build');
   });
+});
+
+gulp.task('clear', function() {
+  return del.sync(path.clean);
 });
 
 gulp.task('build', ['css:prod', 'html:build']);
