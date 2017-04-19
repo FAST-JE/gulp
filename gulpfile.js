@@ -66,6 +66,7 @@ gulp.task('css:dev', function () {
     .pipe(bs.stream());
 });
 
+
 gulp.task('css:prod', function () {
   return gulp.src(path.app.postcss)
     .pipe(dev(sourcemaps.init()))
@@ -76,8 +77,8 @@ gulp.task('css:prod', function () {
 });
 
 gulp.task('html:build', function () {
-  gulp.src(path.app.html)
-    .pipe(gulp.dest(path.build.html))
+  return gulp.src(path.app.html)
+    .pipe(gulp.dest(path.app.root))
     .pipe(bs.stream());
 });
 
