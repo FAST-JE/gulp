@@ -1,10 +1,11 @@
-var gulp = require('gulp');
-var postcss = require('gulp-postcss');
-var environments = require('gulp-environments');
-var sourcemaps = require('gulp-sourcemaps');
-var del = require('del');
-var bs = require('browser-sync').create();
-var watch = require('gulp-watch');
+const gulp         = require('gulp');
+const postcss      = require('gulp-postcss');
+const environments = require('gulp-environments');
+const sourcemaps   = require('gulp-sourcemaps');
+const del          = require('del');
+const bs           = require('browser-sync').create();
+const watch        = require('gulp-watch');
+const spritesmith  = require('gulp.spritesmith');
 
 var dev = environments.development;
 var prod = environments.production;
@@ -33,58 +34,66 @@ var postcss_for_prod = [
 ];
 
 var path = {
-  build: {
-    html:    './build/',
-    js:      './build/js/',
-    css:     './build/css/',
-    img:     './build/img/'
+  dist: {
+    html:    './dist/',
+    js:      './dist/js/',
+    css:     './dist/css/',
+    img:     './dist/img/'
   },
-  app: {
-    html:    './app/*.html',
-    js:      './app/js/**/*.js',
-    css:     './app/css/**/*.css',
-    postcss: './app/postcss/**/*.css',
-    img:     './app/img/**/*.*'
+  src: {
+    html:    './src/*.html',
+    js:      './src/js/**/*.js',
+    css:     './src/css/**/*.css',
+    postcss: './src/postcss/**/*.css',
+    img:     './src/img/**/*.*'
   },
   watch: {
-    html:    './app/**/*.html',
-    js:      './app/js/**/*.js',
-    css:     './app/postcss/**/*.css',
-    postcss: './app/postcss/**/*.css',
-    img:     './app/img/**/*.*'
+    html:    './src/**/*.html',
+    js:      './src/js/**/*.js',
+    css:     './src/postcss/**/*.css',
+    postcss: './src/postcss/**/*.css',
+    img:     './src/img/**/*.*'
   },
-  clean: './build'
+  clean: './dist'
 };
 
 gulp.task('css:dev', function () {
-  return gulp.src(path.app.postcss)
+  return gulp.src(path.src.postcss)
     .pipe(dev(sourcemaps.init()))
     .pipe(postcss(postcss_for_dev))
     .pipe(dev(sourcemaps.write('.')))
-    .pipe(gulp.dest(path.build.css))
+    .pipe(gulp.dest(path.dist.css))
     .pipe(bs.stream());
 });
 
 
 gulp.task('css:prod', function () {
-  return gulp.src(path.app.postcss)
+  return gulp.src(path.src.postcss)
     .pipe(dev(sourcemaps.init()))
     .pipe(postcss(postcss_for_prod))
     .pipe(dev(sourcemaps.write('.')))
-    .pipe(gulp.dest(path.build.css))
+    .pipe(gulp.dest(path.dist.css))
     .pipe(bs.stream());
 });
 
 gulp.task('html:build', function () {
-  return gulp.src(path.app.html)
-    .pipe(gulp.dest(path.build.html))
+  return gulp.src(path.src.html)
+    .pipe(gulp.dest(path.dist.html))
     .pipe(bs.stream());
+});
+
+gulp.task('sprite', function () {
+  var spriteData = gulp.src(path.src.img).pipe(spritesmith({
+    imgName: 'sprite.png',
+    cssName: 'sprite.css'
+  }));
+  return spriteData.pipe(gulp.dest(path.dist.img));
 });
 
 gulp.task('bs', function() {
   bs.init({
     server: {
-      baseDir: [path.build.html]
+      baseDir: [path.dist.html]
     },
     port: 8080,
     host: 'localhost',

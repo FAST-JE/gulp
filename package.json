@@ -32,5 +32,8 @@
     "postcss-short": "^3.0.3",
     "postcss-url": "^6.0.4",
     "stylelint": "^7.10.1"
+  },
+  "dependencies": {
+    "gulp.spritesmith": "^6.5.0"
   }
 }
